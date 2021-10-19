@@ -79,9 +79,28 @@ namespace Cifrado
             k2 = Permutar(LS3 + LS4, 1);
         }
 
+        private string Swapbox0(string clave)
+        {
+            string f, c, s0;
+            char[] aux = clave.ToCharArray();
+            f = aux[0].ToString() + aux[3].ToString();
+            c = aux[1].ToString() + aux[2].ToString();
+            return s0 = sb0[BinarioDecimal(Convert.ToInt32(f)), BinarioDecimal(Convert.ToInt32(c))];
+        }
+
+        private string Swapbox1(string clave)
+        {
+            string f, c, s1;
+            char[] aux = clave.ToCharArray();
+            f = aux[4].ToString() + aux[7].ToString();
+            c = aux[5].ToString() + aux[6].ToString();
+            return s1 = sb1[BinarioDecimal(Convert.ToInt32(f)), BinarioDecimal(Convert.ToInt32(c))];
+        }
+
         public byte [] Cifrar(byte[] texto, int dllave)
         {
-            string bits, auxIP1, auxIP2, comb, s0, s1, f1, f2, c1, c2, swap;
+            byte[] res = new byte[texto.Length];
+            string bits, auxIP1, auxIP2, comb, s0, s1, swap, sw1, sw2, pinv;
             llave = DecimalBinario(dllave, 10);
             GenerarClaves(llave); //k1, k2
 
@@ -94,22 +113,25 @@ namespace Cifrado
                 EP = Permutar(auxIP2, 3);
                 //XOR EP y K1
                 comb = xor(EP, k1);
-                char[] aux = comb.ToCharArray();
-                f1 = aux[0].ToString() + aux[3].ToString();
-                c1 = aux[1].ToString() + aux[2].ToString();
-                f2 = aux[4].ToString() + aux[7].ToString();
-                c2 = aux[5].ToString() + aux[6].ToString();
-                s0 = sb0[BinarioDecimal(Convert.ToInt32(f1)), BinarioDecimal(Convert.ToInt32(c1))];
-                s1 = sb1[BinarioDecimal(Convert.ToInt32(f2)), BinarioDecimal(Convert.ToInt32(c2))];
+                s0 = Swapbox0(comb);
+                s1 = Swapbox1(comb);
                 P4 = Permutar(s0 + s1, 2);
                 //XOR P4 y auxIP1
                 comb = xor(P4, auxIP1);
                 //swap
                 swap = auxIP2 + comb;
+                sw1 = swap.Substring(0, 4); // se realiza el xor
+                sw2 = swap.Substring(4, 4);
+                EP = Permutar(sw2, 3);
+                comb = xor(EP, k2);
+                s0 = Swapbox0(comb);
+                s1 = Swapbox1(comb);
+                P4 = Permutar(s0 + s1, 2);
+                comb = xor(P4, sw1);
+                pinv = Permutar(comb + sw2, 5);
+                res = BitConverter.GetBytes(BinarioDecimal(Convert.ToInt32(pinv)));
             }
-
-
-            throw new NotImplementedException();
+            return res;
         }
 
         public byte [] Descifrar(byte[] texto, int dllave)
@@ -121,7 +143,6 @@ namespace Cifrado
         //Binario → Decimal
         int BinarioDecimal(long binario)
         {
-
             int numero = 0;
             int digito = 0;
             const int DIVISOR = 10;
