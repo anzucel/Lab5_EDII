@@ -15,8 +15,8 @@ namespace Cifrado
 
         public Sdes()
         {
-            var Direccion = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var path = Direccion + @"/Permutations.txt";
+            //var Direccion = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var path = "../Permutations.txt";
             Permutaciones = File.ReadAllLines(path);
         }
 
