@@ -18,6 +18,8 @@ namespace PruebaConsola
             byte[] bytes = { 211, 211 };//Encoding.ASCII.GetBytes(txt);
             byte[] cifrado= sdes.Cifrar(bytes, 364);
             byte[] descifrado = sdes.Descifrar(cifrado, 364);
+
+
         }
     }
 }

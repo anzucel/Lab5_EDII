@@ -24,6 +24,7 @@ namespace ProyectoAPI.Controllers
             return new string[] { "value1", "value2" };
         }
 
+
         // GET api/<sdesController>/5
         [HttpGet("{id}")]
         public string Get(int id)
@@ -31,34 +32,27 @@ namespace ProyectoAPI.Controllers
             return "value";
         }
 
+
         // POST api/<sdesController>
         [HttpPost]
         [Route("cipher/{nombre}")]
-        public IActionResult PostFileCompress([FromForm] IFormFile file, [FromRoute] string name)
+        public IActionResult PostFileCompress([FromForm] IFormFile file, [FromRoute] string name, [FromForm] IFormFile key)
         {
             byte[] buffer = new byte[0];
-
-
 
             using (MemoryStream archivotexto = new MemoryStream())
 
                 try
                 {
-
                     var bytesarray = archivotexto.ToArray();
                     file.CopyToAsync(archivotexto);
-
-
-
 
                     using var leer = new BinaryReader(archivotexto);
                     archivotexto.Position = 0;
 
                     while (archivotexto.Position < archivotexto.Length)
                     {
-
                         buffer = leer.ReadBytes(1);
-
                     }
                     return Ok();
                 }
@@ -67,24 +61,15 @@ namespace ProyectoAPI.Controllers
                     return StatusCode(500);
                 }
         }
+
+
 
         // POST api/<sdesController>
         [HttpPost]
         [Route("decipher")]
-        public IActionResult DecipherPostFileCompress([FromForm] IFormFile file, [FromRoute] string name)
+        public IActionResult DecipherPostFileCompress([FromForm] IFormFile file, [FromForm] IFormFile key)
         {
-
-            //if (Tipos.Key == null || !(int.TryParse(Tipos.Key, out int Key)))
-            //{
-            //    return BadRequest(new string[] { "El valor -Key- es inválido" });
-            //}
-            //else
-            //{ }
-
-                byte[] buffer = new byte[0];
-
-
-
+            byte[] buffer = new byte[3];
             using (MemoryStream archivotexto = new MemoryStream())
 
                 try
@@ -93,18 +78,16 @@ namespace ProyectoAPI.Controllers
                     var bytesarray = archivotexto.ToArray();
                     file.CopyToAsync(archivotexto);
 
-
-
-
                     using var leer = new BinaryReader(archivotexto);
                     archivotexto.Position = 0;
 
+
                     while (archivotexto.Position < archivotexto.Length)
                     {
-
-                        buffer = leer.ReadBytes(1);
-
+                        buffer = leer.ReadBytes(3);
                     }
+                    generarArchivo_txt(buffer, "sifunciona");
+
                     return Ok();
                 }
                 catch (Exception)
@@ -113,18 +96,30 @@ namespace ProyectoAPI.Controllers
                 }
         }
 
-
-
-        // PUT api/<sdesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void generarArchivo_txt(byte[] datos, string name)
         {
-        }
+             string fileName = name + ".txt";
 
-        // DELETE api/<sdesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+
+            byte[] dataArray = datos;
+
+            using (FileStream
+                fileStream = new FileStream(fileName, FileMode.Create))
+            {
+                //escribe byte por byte
+                for (int i = 0; i < dataArray.Length; i++)
+                {
+                    fileStream.WriteByte(dataArray[i]);
+                }
+
+                // Set the stream position to the beginning of the file.
+                fileStream.Seek(0, SeekOrigin.Begin);
+
+            }
+
         }
     }
 }
+
+ 
+
