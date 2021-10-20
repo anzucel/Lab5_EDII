@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections;
 using Cifrado;
+using ProyectoAPI.Extra;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ProyectoAPI.Controllers
@@ -45,6 +46,13 @@ namespace ProyectoAPI.Controllers
             int llave = Convert.ToInt32(key);
             String name = nombre;
             ISdes cifrar = new Cifrado.Sdes();
+
+            string nombrearchiv = file.FileName;
+            string nombrearchivofinal = nombrearchiv.Split(".").First();
+
+            Singleton.Instance.name_cipher.Add(nombre);
+            Singleton.Instance.name_Original.Add(nombrearchivofinal);
+
 
             using (MemoryStream archivotexto = new MemoryStream())
 
@@ -85,6 +93,21 @@ namespace ProyectoAPI.Controllers
             var mahByteArray = new List<byte[]>();
             int llave = Convert.ToInt32(key);
             ISdes Descifrar = new Cifrado.Sdes();
+            string nameOriginal = "";
+            string nombrearchiv = file.FileName;
+            string nombrearchivofinal = nombrearchiv.Split(".").First();
+
+
+
+            for (int i=0; i< Singleton.Instance.name_cipher.Count;i++)
+            {
+               
+                if (nombrearchivofinal==Singleton.Instance.name_cipher[i])
+                {
+                    nameOriginal = Singleton.Instance.name_Original[i];
+                }
+            }
+             
 
             using (MemoryStream archivotexto = new MemoryStream())
 
@@ -106,7 +129,7 @@ namespace ProyectoAPI.Controllers
 
                     }
                   
-                    generarArchivo_txt(mahByteArray, "sifunciona");
+                    generarArchivo_txt(mahByteArray, nameOriginal);
 
                     return Ok();
                 }
