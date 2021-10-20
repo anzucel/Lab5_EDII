@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ProyectoAPI.Controllers
@@ -69,7 +70,12 @@ namespace ProyectoAPI.Controllers
         [Route("decipher")]
         public IActionResult DecipherPostFileCompress([FromForm] IFormFile file, [FromForm] IFormFile key)
         {
-            byte[] buffer = new byte[3];
+            byte[] buffer = new byte[0];
+            byte[] bufferfinal = new byte[0];
+
+            var mahByteArray = new List<byte>();
+            mahByteArray.AddRange(buffer);
+
             using (MemoryStream archivotexto = new MemoryStream())
 
                 try
@@ -84,9 +90,12 @@ namespace ProyectoAPI.Controllers
 
                     while (archivotexto.Position < archivotexto.Length)
                     {
-                        buffer = leer.ReadBytes(3);
+                        buffer = leer.ReadBytes(1);
+                        mahByteArray.Add(buffer[buffer.Length]); 
+
                     }
-                    generarArchivo_txt(buffer, "sifunciona");
+                    bufferfinal = mahByteArray.ToArray();
+                    generarArchivo_txt(bufferfinal, "sifunciona");
 
                     return Ok();
                 }
