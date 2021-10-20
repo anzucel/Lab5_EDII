@@ -16,26 +16,26 @@ namespace Cifrado
         public Sdes()
         {
             var Direccion = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var path = Direccion + @"\Permutations.txt";
+            var path = Direccion + @"/Permutations.txt";
             Permutaciones = File.ReadAllLines(path);
         }
 
         private string Permutar(string clave, int numPermutacion)
         {
             char[] array = clave.ToCharArray();
-            string res = "";
+            string resu = "";
             string[] aux = Permutaciones[numPermutacion].Split(',');
             for (int i = 0; i < aux.Length; i++)
             {
                 int pos = Convert.ToInt32(aux[i]);
-                res += array[pos-1];
+                resu += array[pos-1];
             }
-            return res;
+            return resu;
         }
 
         private string CorrerIzq(string clave)
         {
-            string res = "";
+            string resu = "";
             char aux = ' ';
             for (int i = 0; i < clave.Length; i++)
             {
@@ -43,27 +43,27 @@ namespace Cifrado
                     aux = clave[0];
                 }                    
                 else {
-                    res += clave[i];
+                    resu += clave[i];
                 }
             }
-            return res + aux;
+            return resu + aux;
         }
 
         private string xor(string a, string b)
         {
-            string res = "";
+            string resu = "";
             for (int i = 0; i < a.Length; i++)
             {
                 if (a[i] == b[i])
                 {
-                    res += "0";
+                    resu += "0";
                 }
                 else
                 {
-                    res += "1";
+                    resu += "1";
                 }
             }
-            return res;
+            return resu;
         }
 
         private void GenerarClaves(string llave)
@@ -129,16 +129,51 @@ namespace Cifrado
                 P4 = Permutar(s0 + s1, 2);
                 comb = xor(P4, sw1);
                 pinv = Permutar(comb + sw2, 5);
-                res = BitConverter.GetBytes(BinarioDecimal(Convert.ToInt32(pinv)));
+              
+                //res = BitConverter.GetBytes(BinarioDecimal(Convert.ToInt32(pinv)));
+                res[i] = Convert.ToByte( (BinarioDecimal(Convert.ToInt32(pinv))));
             }
             return res;
         }
 
         public byte [] Descifrar(byte[] texto, int dllave)
         {
-            throw new NotImplementedException();
-        }
+            byte[] res = new byte[texto.Length];
+            string bits, auxIP1, auxIP2, comb, s0, s1, swap, sw1, sw2, pinv;
+            llave = DecimalBinario(dllave, 10);
+            GenerarClaves(llave); //k1, k2
 
+            for (int i = 0; i < texto.Length; i++)
+            {
+                bits = DecimalBinario(texto[i], 8);
+                IP = Permutar(bits, 4);
+                auxIP1 = IP.Substring(0, 4); // se utiliza en XOR
+                auxIP2 = IP.Substring(4, 4); // se utiliza nuevamente al hacer swap
+                EP = Permutar(auxIP2, 3);
+                //XOR EP y K1
+                comb = xor(EP, k2);
+                s0 = Swapbox0(comb);
+                s1 = Swapbox1(comb);
+                P4 = Permutar(s0 + s1, 2);
+                //XOR P4 y auxIP1
+                comb = xor(P4, auxIP1);
+                //swap
+                swap = auxIP2 + comb;
+                sw1 = swap.Substring(0, 4); // se realiza el xor
+                sw2 = swap.Substring(4, 4);
+                EP = Permutar(sw2, 3);
+                comb = xor(EP, k1);
+                s0 = Swapbox0(comb);
+                s1 = Swapbox1(comb);
+                P4 = Permutar(s0 + s1, 2);
+                comb = xor(P4, sw1);
+                pinv = Permutar(comb + sw2, 5);
+
+                //res = BitConverter.GetBytes(BinarioDecimal(Convert.ToInt32(pinv)));
+                res[i] = Convert.ToByte((BinarioDecimal(Convert.ToInt32(pinv))));
+            }
+            return res;
+        }
 
         //Binario → Decimal
         int BinarioDecimal(long binario)
