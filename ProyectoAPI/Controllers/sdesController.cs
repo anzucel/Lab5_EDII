@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections;
+using Cifrado;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ProyectoAPI.Controllers
@@ -37,9 +37,14 @@ namespace ProyectoAPI.Controllers
         // POST api/<sdesController>
         [HttpPost]
         [Route("cipher/{nombre}")]
-        public IActionResult PostFileCompress([FromForm] IFormFile file, [FromRoute] string name, [FromForm] IFormFile key)
+        public IActionResult PostFileCompress([FromForm] IFormFile file, [FromRoute] string nombre, [FromForm] IFormFile key)
         {
             byte[] buffer = new byte[0];
+            byte[] bufferfinal = new byte[0];
+            var mahByteArray = new List<byte[]>();
+            int llave = Convert.ToInt32(key);
+            String name = nombre;
+            ISdes cifrar = new Cifrado.Sdes();
 
             using (MemoryStream archivotexto = new MemoryStream())
 
@@ -53,8 +58,13 @@ namespace ProyectoAPI.Controllers
 
                     while (archivotexto.Position < archivotexto.Length)
                     {
-                        buffer = leer.ReadBytes(1);
+                        buffer = leer.ReadBytes(100000);
+                        bufferfinal = cifrar.Cifrar(buffer, llave);
+                        mahByteArray.Add(bufferfinal);
                     }
+
+                    generarArchivo_txt(mahByteArray, name);
+
                     return Ok();
                 }
                 catch (Exception)
@@ -72,9 +82,9 @@ namespace ProyectoAPI.Controllers
         {
             byte[] buffer = new byte[0];
             byte[] bufferfinal = new byte[0];
-
-            var mahByteArray = new List<byte>();
-            mahByteArray.AddRange(buffer);
+            var mahByteArray = new List<byte[]>();
+            int llave = Convert.ToInt32(key);
+            ISdes Descifrar = new Cifrado.Sdes();
 
             using (MemoryStream archivotexto = new MemoryStream())
 
@@ -90,12 +100,13 @@ namespace ProyectoAPI.Controllers
 
                     while (archivotexto.Position < archivotexto.Length)
                     {
-                        buffer = leer.ReadBytes(1);
-                        mahByteArray.Add(buffer[buffer.Length]); 
+                        buffer = leer.ReadBytes(100000);                     
+                        bufferfinal = Descifrar.Cifrar(buffer, llave);
+                        mahByteArray.Add(bufferfinal);
 
                     }
-                    bufferfinal = mahByteArray.ToArray();
-                    generarArchivo_txt(bufferfinal, "sifunciona");
+                  
+                    generarArchivo_txt(mahByteArray, "sifunciona");
 
                     return Ok();
                 }
@@ -105,21 +116,26 @@ namespace ProyectoAPI.Controllers
                 }
         }
 
-        public void generarArchivo_txt(byte[] datos, string name)
+        public void generarArchivo_txt(List<byte[]> datos, string name)
         {
-             string fileName = name + ".txt";
+             string fileName ="../Archivos/"+ name + ".txt";
 
 
-            byte[] dataArray = datos;
+            List<byte[]> dataArray = datos;
 
             using (FileStream
                 fileStream = new FileStream(fileName, FileMode.Create))
             {
                 //escribe byte por byte
-                for (int i = 0; i < dataArray.Length; i++)
+                for(int j=0; j<dataArray.Count;j++)
                 {
-                    fileStream.WriteByte(dataArray[i]);
+                    byte[] imprimir = dataArray[j];
+                    for (int i = 0; i < imprimir.Length; i++)
+                    {
+                        fileStream.WriteByte(imprimir[i]);
+                    }
                 }
+                
 
                 // Set the stream position to the beginning of the file.
                 fileStream.Seek(0, SeekOrigin.Begin);
@@ -127,6 +143,7 @@ namespace ProyectoAPI.Controllers
             }
 
         }
+
     }
 }
 
