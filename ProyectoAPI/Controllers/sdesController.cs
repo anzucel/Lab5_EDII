@@ -38,7 +38,7 @@ namespace ProyectoAPI.Controllers
         // POST api/<sdesController>
         [HttpPost]
         [Route("cipher/{nombre}")]
-        public IActionResult PostFileCompress([FromForm] IFormFile file, [FromRoute] string nombre, [FromForm] IFormFile key)
+        public IActionResult PostFileCompress([FromForm] IFormFile file, [FromRoute] string nombre, [FromForm] String key)
         {
             byte[] buffer = new byte[0];
             byte[] bufferfinal = new byte[0];
@@ -54,18 +54,24 @@ namespace ProyectoAPI.Controllers
             Singleton.Instance.name_Original.Add(nombrearchivofinal);
 
 
-            using (MemoryStream archivotexto = new MemoryStream())
+            MemoryStream archivotexto = new MemoryStream();
 
                 try
                 {
                     var bytesarray = archivotexto.ToArray();
-                    file.CopyToAsync(archivotexto);
-
-                    using var leer = new BinaryReader(archivotexto);
+                    //archivotexto = file;
+                    file.CopyTo(archivotexto);
+                    
+                    
+                    var leer = new BinaryReader(archivotexto);
+                    
                     archivotexto.Position = 0;
+                   
+                    
 
-                    while (archivotexto.Position < archivotexto.Length)
+                    while (archivotexto.Length >archivotexto.Position )
                     {
+                        //archivotexto.Position = 0;
                         buffer = leer.ReadBytes(100000);
                         bufferfinal = cifrar.Cifrar(buffer, llave);
                         mahByteArray.Add(bufferfinal);
@@ -86,7 +92,7 @@ namespace ProyectoAPI.Controllers
         // POST api/<sdesController>
         [HttpPost]
         [Route("decipher")]
-        public IActionResult DecipherPostFileCompress([FromForm] IFormFile file, [FromForm] IFormFile key)
+        public IActionResult DecipherPostFileCompress([FromForm] IFormFile file, [FromForm] string key)
         {
             byte[] buffer = new byte[0];
             byte[] bufferfinal = new byte[0];
@@ -115,7 +121,7 @@ namespace ProyectoAPI.Controllers
                 {
 
                     var bytesarray = archivotexto.ToArray();
-                    file.CopyToAsync(archivotexto);
+                    file.CopyTo(archivotexto);
 
                     using var leer = new BinaryReader(archivotexto);
                     archivotexto.Position = 0;
@@ -124,7 +130,7 @@ namespace ProyectoAPI.Controllers
                     while (archivotexto.Position < archivotexto.Length)
                     {
                         buffer = leer.ReadBytes(100000);                     
-                        bufferfinal = Descifrar.Cifrar(buffer, llave);
+                        bufferfinal = Descifrar.Descifrar(buffer, llave);
                         mahByteArray.Add(bufferfinal);
 
                     }
