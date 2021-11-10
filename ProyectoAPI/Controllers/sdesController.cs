@@ -45,7 +45,7 @@ namespace ProyectoAPI.Controllers
             var mahByteArray = new List<byte[]>();
             int llave = Convert.ToInt32(key);
             String name = nombre;
-            ISdes cifrar = new Cifrado.Sdes();
+            Cifrado.ISdes cifrar = new Cifrado.Sdes();
 
             string nombrearchiv = file.FileName;
             string nombrearchivofinal = nombrearchiv.Split(".").First();
@@ -98,7 +98,7 @@ namespace ProyectoAPI.Controllers
             byte[] bufferfinal = new byte[0];
             var mahByteArray = new List<byte[]>();
             int llave = Convert.ToInt32(key);
-            ISdes Descifrar = new Cifrado.Sdes();
+            Cifrado.ISdes Descifrar = new Cifrado.Sdes();
             string nameOriginal = "";
             string nombrearchiv = file.FileName;
             string nombrearchivofinal = nombrearchiv.Split(".").First();

@@ -9,7 +9,7 @@ namespace PruebaConsola
     {
         static void Main(string[] args)
         {
-            ISdes sdes = new Cifrado.Sdes();
+            Cifrado.ISdes sdes = new Cifrado.Sdes();
             string txt = "ÓÓ";
             //char ch = 'Ó';
             //byte[] charByte = BitConverter.GetBytes(ch);

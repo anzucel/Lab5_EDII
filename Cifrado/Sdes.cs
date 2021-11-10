@@ -97,7 +97,7 @@ namespace Cifrado
             return s1 = sb1[BinarioDecimal(Convert.ToInt32(f)), BinarioDecimal(Convert.ToInt32(c))];
         }
 
-        public byte [] Cifrar(byte[] texto, int dllave)
+        public byte [] Cifrar(byte[] texto, int dllave, int n)
         {
             byte[] res = new byte[texto.Length];
             string bits, auxIP1, auxIP2, comb, s0, s1, swap, sw1, sw2, pinv;
@@ -136,7 +136,7 @@ namespace Cifrado
             return res;
         }
 
-        public byte [] Descifrar(byte[] texto, int dllave)
+        public byte [] Descifrar(byte[] texto, int dllave, int n)
         {
             byte[] res = new byte[texto.Length];
             string bits, auxIP1, auxIP2, comb, s0, s1, swap, sw1, sw2, pinv;
