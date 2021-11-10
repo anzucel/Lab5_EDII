@@ -7,7 +7,6 @@ namespace Cifrado
 {
     public class CifradoRSA : ISdes
     {
-        //nuevos
         public List<string> generadorLlaves()
         {
             int MAX_RANGE = 100000;
@@ -54,7 +53,6 @@ namespace Cifrado
 
         public List<string> generadorLlaves(int p, int q)
         {
-           
             uint n = 0;
             uint sn;
             if (p == q) throw new Exception("P y Q sin iguales");
@@ -131,7 +129,7 @@ namespace Cifrado
             return resultado;
         }
 
-        public byte[] Cifrar(byte[] data, int e, int n)
+        /*public byte[] cifrar(byte[] data, int e, int n)
         {
             string dataEncryted = "";
             dataEncryted += "15|45|65|";
@@ -142,26 +140,58 @@ namespace Cifrado
                 dataEncryted += xx + "|";
             }
             return Encoding.ASCII.GetBytes(dataEncryted);
+        }*/
+
+        public byte[] Cifrar(byte[] data, int e, int n)
+        {
+            List<byte> dataEncryted = new List<byte>();
+            for (int i = 0; i < 8; i++)
+            {
+                dataEncryted.Add(2);
+            }
+            foreach (byte by in data)
+            {
+                //C = M ^ e mod n
+                byte[] xx = BigInteger.ModPow(by, e, n).ToByteArray();
+
+                foreach (byte b in xx)
+                {
+                    dataEncryted.Add(b);
+                }
+                for (int i = xx.Length; i < 8; i++)
+                {
+                    //System.Diagnostics.Debug.WriteLine(xx.Length + " " + i);
+                    dataEncryted.Add(0);
+                }
+                //dataEncryted.Add(32);
+            }
+            byte[] test = new byte[] { 236, 143, 15, 0 };
+            return dataEncryted.ToArray();
         }
 
-        public byte[] Descifrar(byte[] informacionBytes, int d, int n)
+        public byte[] Descifrar(byte[] data, int d, int n)
         {
-            string informacionString = System.Text.Encoding.Default.GetString(informacionBytes);
-            string[] data = informacionString.Split('|');
-            System.Diagnostics.Debug.WriteLine(data.Length);
-
             //M = C ^ d mod n
-            byte[] dataE = new byte[data.Length - 3];
+            byte[] dataE = new byte[(data.Length - 8) / 8];
             int i = 0;
-            for (int j = 3; j < data.Length - 1; j++)
+            for (int j = 8; j < data.Length; j += 8)
             {
-                int xx = (int)BigInteger.ModPow(BigInteger.Parse(data[j]), d, n);
+                //if (j > 799990) System.Diagnostics.Debug.WriteLine(j);
+                List<byte> bytes = new List<byte>();
+                for (int k = 0; k < 8; k++)
+                {
+                    bytes.Add(data[j + k]);
+                }
+                BigInteger byteParaDes = new BigInteger(bytes.ToArray());
+                int xx = (int)BigInteger.ModPow(byteParaDes, d, n);
                 dataE[i] = (byte)xx;
                 i++;
 
             }
             return dataE;
         }
+    
+
 
         public byte[] Descifrar(byte[] texto, int llave)
         {
