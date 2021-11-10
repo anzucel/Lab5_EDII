@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Numerics;
 using System.Reflection;
 
 namespace Cifrado
@@ -28,7 +29,7 @@ namespace Cifrado
             for (int i = 0; i < aux.Length; i++)
             {
                 int pos = Convert.ToInt32(aux[i]);
-                resu += array[pos-1];
+                resu += array[pos - 1];
             }
             return resu;
         }
@@ -39,10 +40,12 @@ namespace Cifrado
             char aux = ' ';
             for (int i = 0; i < clave.Length; i++)
             {
-                if (i == 0) {
+                if (i == 0)
+                {
                     aux = clave[0];
-                }                    
-                else {
+                }
+                else
+                {
                     resu += clave[i];
                 }
             }
@@ -73,7 +76,7 @@ namespace Cifrado
             LS1 = CorrerIzq(LS1);
             string LS2 = P10.Substring(5, 5);
             LS2 = CorrerIzq(LS2);
-            k1 = Permutar(LS1+LS2, 1);
+            k1 = Permutar(LS1 + LS2, 1);
             string LS3 = CorrerIzq(CorrerIzq(LS1));
             string LS4 = CorrerIzq(CorrerIzq(LS2));
             k2 = Permutar(LS3 + LS4, 1);
@@ -97,7 +100,7 @@ namespace Cifrado
             return s1 = sb1[BinarioDecimal(Convert.ToInt32(f)), BinarioDecimal(Convert.ToInt32(c))];
         }
 
-        public byte [] Cifrar(byte[] texto, int dllave, int n)
+        public byte[] Cifrar(byte[] texto, int dllave)
         {
             byte[] res = new byte[texto.Length];
             string bits, auxIP1, auxIP2, comb, s0, s1, swap, sw1, sw2, pinv;
@@ -129,14 +132,14 @@ namespace Cifrado
                 P4 = Permutar(s0 + s1, 2);
                 comb = xor(P4, sw1);
                 pinv = Permutar(comb + sw2, 5);
-              
+
                 //res = BitConverter.GetBytes(BinarioDecimal(Convert.ToInt32(pinv)));
-                res[i] = Convert.ToByte( (BinarioDecimal(Convert.ToInt32(pinv))));
+                res[i] = Convert.ToByte((BinarioDecimal(Convert.ToInt32(pinv))));
             }
             return res;
         }
 
-        public byte [] Descifrar(byte[] texto, int dllave, int n)
+        public byte[] Descifrar(byte[] texto, int dllave)
         {
             byte[] res = new byte[texto.Length];
             string bits, auxIP1, auxIP2, comb, s0, s1, swap, sw1, sw2, pinv;
@@ -222,5 +225,27 @@ namespace Cifrado
             binario = Convert.ToInt64(Binario);
             return Binario;
         }
+
+        public List<string> generadorLlaves()
+        {
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public byte[] Cifrar(byte[] data, int e, int n)
+        {
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public byte[] Descifrar(byte[] data, int d, int n)
+        {
+            {
+                throw new NotImplementedException();
+            }
+        }
+
     }
 }
