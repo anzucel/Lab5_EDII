@@ -144,21 +144,18 @@ namespace Cifrado
             return Encoding.ASCII.GetBytes(dataEncryted);
         }
 
-        public byte[] Descifrar(byte[] data, int d, int n)
+        public byte[] Descifrar(byte[] informacionBytes, int d, int n)
         {
+            string informacionString = System.Text.Encoding.Default.GetString(informacionBytes);
+            string[] data = informacionString.Split('|');
+            System.Diagnostics.Debug.WriteLine(data.Length);
+
             //M = C ^ d mod n
-            byte[] dataE = new byte[(data.Length - 8) / 8];
+            byte[] dataE = new byte[data.Length - 3];
             int i = 0;
-            for (int j = 8; j < data.Length; j += 8)
+            for (int j = 3; j < data.Length - 1; j++)
             {
-                //if (j > 799990) System.Diagnostics.Debug.WriteLine(j);
-                List<byte> bytes = new List<byte>();
-                for (int k = 0; k < 8; k++)
-                {
-                    bytes.Add(data[j + k]);
-                }
-                BigInteger byteParaDes = new BigInteger(bytes.ToArray());
-                int xx = (int)BigInteger.ModPow(byteParaDes, d, n);
+                int xx = (int)BigInteger.ModPow(BigInteger.Parse(data[j]), d, n);
                 dataE[i] = (byte)xx;
                 i++;
 
