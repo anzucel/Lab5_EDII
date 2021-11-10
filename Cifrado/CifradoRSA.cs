@@ -131,7 +131,7 @@ namespace Cifrado
             return resultado;
         }
 
-        /*public byte[] cifrar(byte[] data, int e, int n)
+        public byte[] Cifrar(byte[] data, int e, int n)
         {
             string dataEncryted = "";
             dataEncryted += "15|45|65|";
@@ -142,34 +142,6 @@ namespace Cifrado
                 dataEncryted += xx + "|";
             }
             return Encoding.ASCII.GetBytes(dataEncryted);
-        }*/
-
-        public byte[] Cifrar(byte[] data, int e, int n)
-        {
-            
-                List<byte> dataEncryted = new List<byte>();
-            for (int i = 0; i < 8; i++)
-            {
-                dataEncryted.Add(2);
-            }
-            foreach (byte by in data)
-            {
-                //C = M ^ e mod n
-                byte[] xx = BigInteger.ModPow(by, e, n).ToByteArray();
-
-                foreach (byte b in xx)
-                {
-                    dataEncryted.Add(b);
-                }
-                for (int i = xx.Length; i < 8; i++)
-                {
-                    //System.Diagnostics.Debug.WriteLine(xx.Length + " " + i);
-                    dataEncryted.Add(0);
-                }
-                //dataEncryted.Add(32);
-            }
-            byte[] test = new byte[] { 236, 143, 15, 0 };
-            return dataEncryted.ToArray();
         }
 
         public byte[] Descifrar(byte[] data, int d, int n)
