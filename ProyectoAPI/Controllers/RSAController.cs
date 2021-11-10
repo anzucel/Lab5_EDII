@@ -60,12 +60,12 @@ namespace ProyectoAPI.Controllers
 
         [Route("{nombre}")]
         [HttpPost]
-        public IActionResult normalGet([FromForm] List<IFormFile> files, [FromRoute] string nombre)
+        public IActionResult normalGet([FromForm] List<IFormFile> files, [FromRoute] string nombre, [FromForm] List<IFormFile> key)
         {
             try
             {
                 IFormFile informacion = files[0];
-                IFormFile key = files[1];
+                IFormFile keyFile = key[0];
                 byte[] informacionBytes = null;
                 using (var ms = new MemoryStream())
                 {
@@ -76,7 +76,7 @@ namespace ProyectoAPI.Controllers
                 byte[] keyBytes = null;
                 using (var ms = new MemoryStream())
                 {
-                    key.CopyTo(ms);
+                    keyFile.CopyTo(ms);
                     keyBytes = ms.ToArray();
                 }
 
@@ -84,7 +84,7 @@ namespace ProyectoAPI.Controllers
                 string contenidoKey = Encoding.ASCII.GetString(keyBytes, 0, keyBytes.Length);
                 byte[] informacionProcesada;
                 System.Diagnostics.Debug.WriteLine(informacionBytes[0] + " " + informacionBytes[1]);
-                if (!(informacionBytes[0] == 49))
+                if (!(informacionBytes[0] == 2 && informacionBytes[1] == 2 && informacionBytes[2] == 2))
                 {
                     System.Diagnostics.Debug.WriteLine("encrypt");
                     string es = contenidoKey.Substring(0, contenidoKey.IndexOf(','));
@@ -94,10 +94,10 @@ namespace ProyectoAPI.Controllers
                 }
                 else
                 {
-                    string informacionString = System.Text.Encoding.Default.GetString(informacionBytes);
+                    //string informacionString = System.Text.Encoding.Default.GetString(informacionBytes);
                     //System.Diagnostics.Debug.WriteLine(informacionString);
-                    string[] infoString = informacionString.Split('|');
-                    System.Diagnostics.Debug.WriteLine(infoString.Length);
+                    //string[] infoString = informacionString.Split('|');
+                    //System.Diagnostics.Debug.WriteLine(infoString.Length);
                     string ds = contenidoKey.Substring(0, contenidoKey.IndexOf(','));
                     string ns = contenidoKey.Substring(contenidoKey.IndexOf(',') + 1, contenidoKey.Length - contenidoKey.IndexOf(',') - 1);
                     informacionProcesada = cifrado.Descifrar(informacionBytes, Convert.ToInt32(ds), Convert.ToInt32(ns));
