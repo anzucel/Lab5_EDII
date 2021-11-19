@@ -40,6 +40,7 @@ namespace Cifrado
                 if (mcd(sn, e) == 1) esMCD = true;
                 d = inversa(sn, e);
             }
+            if (e == d) throw new Exception("Llaves son iguales, volver a generar llaves");
             Console.WriteLine(p + " : " + q + " : " + e + " : " + d + "  " + sn);
             string publicKey = e + "," + n;
             string privateKey = d + "," + n;
@@ -74,6 +75,7 @@ namespace Cifrado
                 d = inversa(sn, e);
                 if (d == e) d += sn;
             }
+            if (e == d) throw new Exception("Llaves son iguales, volver a generar llaves");
             //System.Diagnostics.Debug.WriteLine("AAA: " + BigInteger.Multiply(d,e) % sn);
             string publicKey = e + "," + n;
             string privateKey = d + "," + n;
@@ -190,7 +192,7 @@ namespace Cifrado
             }
             return dataE;
         }
-    
+
 
 
         public byte[] Descifrar(byte[] texto, int llave)
